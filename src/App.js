@@ -15,13 +15,13 @@ function App() {
         <div style={styles.container}>
           {data.map((image_data, index) => {
             return (
-              <div style={styles.imageContainer}
+              <div key={index} style={styles.imageContainer}
                 onClick={() => {
                   setShowModal(true);
                   setSelectedContent(image_data);
                 }}
               >
-                <img style={styles.image} src={image_data.url} />
+                <img style={styles.image} src={image_data.url} alt={image_data.description}/>
                 <div style={styles.imageDescription}>
                   <p style={styles.imageDescriptionText}>{image_data.name}</p>
                 </div>
