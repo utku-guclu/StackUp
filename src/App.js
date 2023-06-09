@@ -6,7 +6,7 @@ import Header from './components/Header';
 function App() {
   const [showModal, setShowModal] = useState(false);
   const [selectedContent, setSelectedContent] = useState(null);
-
+  
   return (
     <>
       {showModal&&<Modal setShowModal={setShowModal} setSelectedContent={setSelectedContent} content={selectedContent} data={data}/>}
