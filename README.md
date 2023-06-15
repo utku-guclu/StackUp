@@ -1,70 +1,21 @@
-# Getting Started with Create React App
+# Multimedia Web App Features
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Feature 1: Color Feature
+### Description:
+The Color feature is a new addition to the Multimedia Web App. It provides users with the ability to apply color effects to images. The feature works by allowing users to select from a range of predefined color filters, such as sepia, grayscale, vintage, and more. When an image is selected, the chosen color filter is applied to the image, transforming its appearance according to the selected effect.
 
-## Available Scripts
+### Why I Chose this Feature:
+I chose to add the Color feature to enhance the creative possibilities of the Multimedia Web App. Adding color effects to images can significantly alter their mood and aesthetics, allowing users to explore different artistic styles and expressions. This feature enables users to personalize their images and create visually captivating content. Additionally, the Color feature aligns with the growing trend of social media platforms offering built-in photo editing tools, providing users with a seamless and integrated experience within the app.
 
-In the project directory, you can run:
+### How the Code Works:
+The Color feature is implemented using JavaScript and CSS. The user interface includes a dropdown menu or a set of buttons that allow users to select the desired color effect. When a user chooses a color effect, an event listener captures the selection. The JavaScript code then applies the chosen effect to the selected image by manipulating its CSS properties. For example, to apply the grayscale effect, the code sets the CSS filter property to grayscale(100%) for the selected image. This CSS filter property provides a wide range of options to apply various color effects. The applied effect is instantly visible to the user, creating an interactive and engaging experience.
 
-### `npm start`
+## Feature 2: Lock Feature
+Description:
+The Lock feature is another addition to the Multimedia Web App. It allows users to lock specific files or images to prevent accidental deletion or modification. When a file or image is locked, it becomes read-only, and any attempt to delete or modify it is disabled. This feature provides users with greater control over their files, ensuring the preservation of important or sensitive content.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Why I Chose this Feature:
+I selected the Lock feature to enhance the functionality and security of the Multimedia Web App. It is common for users to have valuable or irreplaceable files that need protection. By adding the ability to lock files, users can prevent accidental data loss or unauthorized modifications. This feature is particularly relevant in scenarios where the app is used for storing and managing important documents, personal photos, or confidential files. The Lock feature empowers users to safeguard their content within the app itself, eliminating the need for external file locking mechanisms.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### How the Code Works:
+The Lock feature is implemented using JavaScript and state management. Each file or image in the app has an associated locked property. When a user selects the lock option for a specific file, the corresponding locked property is set to true. This change in state triggers a re-render of the app, and the locked file is visually distinguished from others, indicating its locked status. Additionally, event handlers for deletion or modification actions check the locked property before executing the operation. If the locked property is set to true, the action is prevented, and a notification is displayed to the user, informing them that the file is locked. The code ensures that the locked status is maintained across different interactions and user sessions, providing consistent file protection.
