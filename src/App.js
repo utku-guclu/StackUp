@@ -35,6 +35,11 @@ export default function App() {
   const [filePath, setFilePath] = useState("/file-server/");
   const [showChartModal, setShowChartModal] = useState(false);
 
+  // Changing the background color while media viewing
+  const [backgroundColor, setBackgroundColor] = useState("#FFFFFF");
+  // adding a lock functionality
+  const [locked, setLocked] = useState(false);
+
   useEffect(() => {
     setMyFiles(data);
   }, []);
@@ -134,13 +139,30 @@ export default function App() {
       )}
       <div className="App">
         <Header />
-        <div style={styles.container}>
+        <div style={{ ...styles.container, backgroundColor }}>
           <div style={{ padding: 10, paddingBottom: 0 }}>
             <p style={{ fontWeight: "bold" }}>My Files</p>
             <p>{selectedFile ? selectedFile.path : filePath}</p>
           </div>
           <div style={styles.controlTools}>
             <button
+              style={styles.controlButton}
+              onClick={() => {
+                setShowChartModal(true);
+              }}
+            >
+              Files Breakdown
+            </button>
+            <button
+              style={styles.controlButton}
+              onClick={() => {
+                setLocked(!locked); // Toggle the locked state when the button is clicked
+              }}
+            >
+              {locked ? "Unlock" : "Lock"} Files
+            </button>
+            <button
+              disabled={!selectedFile}
               style={styles.controlButton}
               onClick={() => {
                 if (selectedFile) {
@@ -160,15 +182,9 @@ export default function App() {
             >
               Rename
             </button>
+
             <button
-              style={styles.controlButton}
-              onClick={() => {
-                setShowChartModal(true);
-              }}
-            >
-              Files Breakdown
-            </button>
-            <button
+              disabled={!selectedFile}
               style={styles.controlButton}
               onClick={() => {
                 if (selectedFile) {
@@ -179,23 +195,30 @@ export default function App() {
               Download
             </button>
             <button
+              disabled={!selectedFile}
               style={styles.controlButton}
               onClick={() => {
                 if (selectedFile) {
-                  const filteredFiles = myFiles.filter(
-                    (file) => file.id !== selectedFile.id
-                  );
-                  setMyFiles(filteredFiles);
-                  setSelectedFile(null);
+                  if (locked) {
+                    alert("File deletion is locked. Unlock to delete files.");
+                  } else {
+                    const filteredFiles = myFiles.filter(
+                      (file) => file.id !== selectedFile.id
+                    );
+                    setMyFiles(filteredFiles);
+                    setSelectedFile(null);
+                  }
                 }
               }}
             >
               Delete
             </button>
+
           </div>
           <div style={styles.fileContainer}>
             <div style={{ width: "100%", padding: 10 }}>
               {myFiles.map((file) => {
+                console.log(myFiles[myFiles.length - 1]);
                 if (file.path.slice(0, filePath.length) === filePath) {
                   return (
                     <div
@@ -205,9 +228,28 @@ export default function App() {
                       onClick={() => {
                         if (selectedFile && selectedFile.id === file.id) {
                           setSelectedFile(null);
+                          setBackgroundColor("#FFFFFF"); // Reset background color when file is deselected
                           return;
                         }
                         setSelectedFile(file);
+                        // Set background color based on file type
+                        switch (file.type) {
+                          case "video":
+                            setBackgroundColor("#FF9999"); // Set background color for video files
+                            break;
+                          case "audio":
+                            setBackgroundColor("#87CEEB"); // Set background color for audio files
+                            break;
+                          case "document":
+                            setBackgroundColor("#FFFF99"); // Set background color for document files
+                            break;
+                          case "image":
+                            setBackgroundColor("#98FB98"); // Set background color for image files
+                            break;
+                          default:
+                            setBackgroundColor("#FFFFFF"); // Default background color
+                            break;
+                        }
                       }}
                     >
                       <p>{file.name}</p>
@@ -295,53 +337,53 @@ const styles = {
   },
   // modal
   modal: {
-    position: 'fixed',
+    position: "fixed",
     top: 0,
     left: 0,
-    width: '100vw',
-    height: '100vh',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100vw",
+    height: "100vh",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    backgroundColor: '#fff',
-    padding: '20px',
-    height: '50vh',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'column',
+    backgroundColor: "#fff",
+    padding: "20px",
+    height: "50vh",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "column",
   },
   modalClose: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 0,
-    padding: '10px',
-    cursor: 'pointer',
+    padding: "10px",
+    cursor: "pointer",
   },
-  modalBody:{
-    width: '100%',
-    height: '90%',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
-    padding: '10px',
+  modalBody: {
+    width: "100%",
+    height: "90%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
+    padding: "10px",
   },
   modalHeader: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
   },
   closeButton: {
-    padding: '10px',
-    border: 'none',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-    backgroundColor: '#eee',
-  }
+    padding: "10px",
+    border: "none",
+    cursor: "pointer",
+    fontWeight: "bold",
+    backgroundColor: "#eee",
+  },
 };
