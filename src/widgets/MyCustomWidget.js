@@ -15,11 +15,11 @@ const MyCustomWidget = () => {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRandomPlay, setIsRandomPlay] = useState(false);
-  const [songs, setSongs] = useState([
+  const songs = [
     { src: song1, type: "audio/mpeg" },
     { src: song2, type: "audio/mpeg" },
     { src: song3, type: "audio/mpeg" },
-  ]);
+  ];
 
   const togglePlay = () => {
     if (audioRef.current.paused) {
@@ -53,11 +53,25 @@ const MyCustomWidget = () => {
     if (isRandomPlay) {
       const randomIndex = Math.floor(Math.random() * songs.length);
       const nextSong = songs[randomIndex];
+      const playPromise = audioRef.current.play();
+
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Playback started successfully
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            // Playback was prevented or failed
+            setIsPlaying(false);
+            console.log(error);
+          });
+      } else {
+        setIsPlaying(true);
+      }
+
       audioRef.current.src = nextSong.src;
       audioRef.current.load();
-      audioRef.current.play().catch((error) => {
-        console.log(error);
-      });
     } else {
       setIsPlaying(false);
     }
