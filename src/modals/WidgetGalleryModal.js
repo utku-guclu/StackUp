@@ -5,6 +5,8 @@ import TimerWidget from "../widgets/TimerWidget";
 import CalendarWidget from "../widgets/CalendarWidget";
 import MyCustomWidget from "../widgets/MyCustomWidget";
 
+import "../App.css";
+
 export default function WidgetGalleryModal({
   setShowWidgetModal,
   selectedWidgetArea,

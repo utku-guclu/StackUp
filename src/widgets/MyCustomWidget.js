@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faPause, faRandom } from "@fortawesome/free-solid-svg-icons";
+import { faPlay, faPause, faRandom, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import song1 from "../audio/song1.mp3";
 import song2 from "../audio/song2.mp3";
@@ -63,15 +63,22 @@ const MyCustomWidget = () => {
           <source key={index} src={song.src} type={song.type} />
         ))}
       </audio>
-      <button className="control-button" onClick={togglePlay}>
+      <button className={`control-button ${isPlaying ? "playing" : ""}`} onClick={togglePlay}>
         {isPlaying ? (
           <FontAwesomeIcon icon={faPause} />
         ) : (
           <FontAwesomeIcon icon={faPlay} />
         )}
       </button>
-      <button className="control-button" onClick={toggleRandomPlay}>
-        <FontAwesomeIcon icon={faRandom} />
+      <button
+        className={`control-button ${isRandomPlay ? "random" : ""}`}
+        onClick={toggleRandomPlay}
+      >
+        {isRandomPlay ? (
+          <FontAwesomeIcon icon={faRandom} />
+        ) : (
+          <FontAwesomeIcon icon={faTimes} />
+        )}
       </button>
     </div>
   );
