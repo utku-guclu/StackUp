@@ -1,6 +1,11 @@
 import React, { useState, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faPause, faRandom, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlay,
+  faPause,
+  faRandom,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 
 import song1 from "../audio/song1.mp3";
 import song2 from "../audio/song2.mp3";
@@ -10,11 +15,7 @@ const MyCustomWidget = () => {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRandomPlay, setIsRandomPlay] = useState(false);
-  const [songs, setSongs] = useState([
-    { src: song1, type: "audio/mpeg" },
-    { src: song2, type: "audio/mpeg" },
-    { src: song3, type: "audio/mpeg" },
-  ]);
+  const [songs, setSongs] = useState([song1, song2, song3]);
 
   const togglePlay = () => {
     if (audioRef.current.paused) {
@@ -63,7 +64,10 @@ const MyCustomWidget = () => {
           <source key={index} src={song.src} type={song.type} />
         ))}
       </audio>
-      <button className={`control-button ${isPlaying ? "playing" : ""}`} onClick={togglePlay}>
+      <button
+        className={`control-button ${isPlaying ? "playing" : ""}`}
+        onClick={togglePlay}
+      >
         {isPlaying ? (
           <FontAwesomeIcon icon={faPause} />
         ) : (
