@@ -5,12 +5,15 @@ import WidgetGalleryModal from './modals/WidgetGalleryModal';
 import Draggable from 'react-draggable';
 import TimerWidget from './widgets/TimerWidget';
 import CalendarWidget from './widgets/CalendarWidget';
+import Mp3Widget from './widgets/Mp3Widget';
+
  
 function App() {
  const [widgets, setWidgets] = useState([
   { id: new Date().getTime(), component: <ClockWidget />, area: 'main-widget', name: "Date and Time" },
   { id: new Date().getTime() + 2, component: <CalendarWidget />, area: 'right-widget', name: "Calendar" },
   { id: new Date().getTime() + 1, component: <TimerWidget />, area: 'left-widget', name:"Timer" },
+  { id: new Date().getTime() + 3, component: <Mp3Widget />, area: 'none-widget', name: "MP3" },
  ])
  const [showWidgetModal, setShowWidgetModal] = useState(false)
  const [selectedWidgetArea, setSelectedWidgetArea] = useState('')
@@ -56,6 +59,7 @@ function App() {
                <option value="left-widget">Left</option>
                <option value="main-widget">Main</option>
                <option value="right-widget">Right</option>
+               <option value="mp3-widget">MP3</option>
               </select>
               <button
                onClick={() => {
@@ -90,6 +94,7 @@ function App() {
             <option value="left-widget">Left</option>
             <option value="main-widget">Main</option>
             <option value="right-widget">Right</option>
+            <option value="mp3-widget">MP3</option>
            </select>
            <button
             onClick={() => {
