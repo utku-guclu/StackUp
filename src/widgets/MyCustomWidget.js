@@ -6,7 +6,7 @@ import song1 from "../audio/song1.mp3";
 import song2 from "../audio/song2.mp3";
 import song3 from "../audio/song3.mp3";
 
-const Mp3Widget = () => {
+const MyCustomWidget = () => {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRandomPlay, setIsRandomPlay] = useState(false);
@@ -77,4 +77,4 @@ const Mp3Widget = () => {
   );
 };
 
-export default Mp3Widget;
+export default MyCustomWidget;
