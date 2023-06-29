@@ -15,7 +15,7 @@ const MyCustomWidget = () => {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRandomPlay, setIsRandomPlay] = useState(false);
-  const [songs, setSongs] = useState([song1, song2, song3]);
+  const songs = [song1, song2, song3];
 
   const togglePlay = () => {
     if (audioRef.current.paused) {
@@ -49,9 +49,11 @@ const MyCustomWidget = () => {
     if (isRandomPlay) {
       const randomIndex = Math.floor(Math.random() * songs.length);
       const nextSong = songs[randomIndex];
-      audioRef.current.src = nextSong.src;
+      audioRef.current.src = nextSong;
       audioRef.current.load();
-      audioRef.current.play();
+      audioRef.current.play().catch((error) => {
+        console.log(error);
+      });
     } else {
       setIsPlaying(false);
     }
@@ -61,7 +63,7 @@ const MyCustomWidget = () => {
     <div className="mp3-widget">
       <audio ref={audioRef} onEnded={handleEnded}>
         {songs.map((song, index) => (
-          <source key={index} src={song.src} type={song.type} />
+          <source key={index} src={song} type="audio/mpeg" />
         ))}
       </audio>
       <button
