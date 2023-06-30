@@ -106,7 +106,6 @@ function App() {
                         <option value="left-widget">Left</option>
                         <option value="main-widget">Main</option>
                         <option value="right-widget">Right</option>
-                        <option value="mp3-widget">MP3</option>
                       </select>
                       <button
                         onClick={() => {
@@ -152,7 +151,6 @@ function App() {
                           <option value="left-widget">Left</option>
                           <option value="main-widget">Main</option>
                           <option value="right-widget">Right</option>
-                          <option value="mp3-widget">MP3</option>
                         </select>
                         <button
                           onClick={() => {
