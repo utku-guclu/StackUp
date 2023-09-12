@@ -45,7 +45,7 @@ git clone [repository](https://github.com/utku-guclu/StackUp/tree/javascript-int
 
 ## Demo
 
-View the live demo: [Website](https://your-demo-link.com)
+Check out the: [Website](https://sokrates-bank-account-app.web.app/)
 
 ## Built With
 
