@@ -7,11 +7,9 @@ A simple web application for managing bank accounts, demonstrating the use of cl
 - [About](#about)
 - [Features](#features)
 - [Usage](#usage)
-- [Installation](#installation)
 - [Demo](#demo)
 - [Built With](#built-with)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## About
 
@@ -57,6 +55,9 @@ Check out the: [Website](https://sokrates-bank-account-app.web.app/)
 
 Contributions are welcome! Please fork the repository and create a pull request with your changes.
 
-## License
+## Special Thanks
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+I would like to extend my heartfelt thanks to StackUp for providing this wonderful bounty project opportunity. Your support and encouragement have been invaluable in the development of this project. 
+
+Thank you for fostering a community of learning and innovation.
+
