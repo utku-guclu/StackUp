@@ -10,6 +10,7 @@ A simple web application for managing bank accounts, demonstrating the use of cl
 - [Demo](#demo)
 - [Built With](#built-with)
 - [Contributing](#contributing)
+- [Special Thanks](#special-thanks)
 
 ## About
 
