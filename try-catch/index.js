@@ -3,13 +3,14 @@ const button = document.getElementById("button");
 button.addEventListener("click", () => {
   const input = document.getElementById("input").value;
   const output = document.getElementById("output");
+  let errorOccured = false;
   let sequence = [];
   try {
     if (input < 0) {
       throw new Error("Input cannot be negative");
-    } else if (input === "") {
+    } else if (input === "x") {
       throw new Error("Input cannot be empty");
-    } else if (isNaN(input)) {
+    } else if (!Number(input)) {
       throw new Error("Input must be a number");
     } else {
       for (let i = 0; i < input; i++) {
@@ -25,11 +26,14 @@ button.addEventListener("click", () => {
     output.innerHTML = sequence.join(", ");
   } catch (err) {
     output.innerHTML = err;
+    errorOccured = true
   } finally {
-    alert(
-      `The ${input}th number in the fibonacci sequence is ${
-        sequence[input - 1]
-      }`
-    );
+    if(!errorOccured) {
+      alert(
+        `The ${input}th number in the fibonacci sequence is ${
+          sequence[input - 1]
+        }`
+      );
+    }
   }
 });
