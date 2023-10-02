@@ -28,7 +28,7 @@ This project simulates a basic bank account management system. Users can create 
 ### Getting Started
 
 1. Clone the repository:
-git clone [repository](https://github.com/utku-guclu/StackUp/tree/javascript-intermediate/bounty)
+git clone [repository](https://utku-guclu.github.io/StackUp)
 2. Navigate to the project directory: 
 3. Open `index.html` in a web browser to start using the application.
 
