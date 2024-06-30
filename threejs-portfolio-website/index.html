@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>About Me | sokrates</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font: 1em sans-serif;
+      }
+
+      canvas {
+        display: block;
+      }
+
+      #app {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100dvh;
+        height: 100dvh;
+      }
+
+      #profile {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin: 0 auto;
+        object-fit: cover;
+      }
+
+      #container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        min-height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+      }
+
+      .background {
+        padding: 10px 20px;
+        width: 400px;
+        background-color: white;
+        opacity: 0.8;
+      }
+
+      .subtitle {
+        font-size: 1.5em;
+        font-weight: bold;
+        padding-left: 5px;
+        border-left: 3px solid gray;
+        margin-top: 30px;
+        color: gray;
+        text-shadow: 1px 1px 1px white;
+      }
+    </style>
+    <script type="module" src="./main.js"></script>
+  </head>
+
+  <body>
+    <div id="app"></div>
+    <div id="container">
+      <div class="background">
+        <div>
+          <img src="./profile.jpg" alt="" id="profile" />
+          <h1>Hello,<br />I am sokrates!</h1>
+        </div>
+
+        <h2 class="subtitle" id="head-1">About Me</h2>
+        <p>
+          I’m working as a<!-- -->
+          <strong class="underline">freelance developer</strong> and
+          contributing to web applications.<br /><span
+            >I love teaching my knowledge to people.</span
+          ><br /><span
+            >In my free time, I <strong>solve problems</strong> and chill.</span
+          >
+        </p>
+        <p>
+          I have proficiency in various programming languages and technologies,
+          such as JavaScript, TypeScript, HTML, CSS, Python, C, Linux, Docker,
+          React, Node.js, MongoDB, Git, and Unity. Additionally, I have
+          experience with system administration, UI/UX design, DevOps, technical
+          writing, security, sound design, and teaching.
+        </p>
+        <p>
+          Throughout my career, I've worked as a Full-stack Developer at
+          HP-appen and as a Tutor & Methodologist at Kodland. I studied Web
+          Development & Design at Anadolu University and learned material
+          science and engineering principles at Dumlupınar University.
+        </p>
+
+        <h2 class="subtitle" id="head-2">My Dream</h2>
+        <p><em>To visit Japan.</em></p>
+        <p>
+          I'm passionate about Japanese culture and have always dreamed of
+          experiencing it firsthand. The technology, the tradition, and the food
+          are all things that I am eager to explore.
+        </p>
+        <p>
+          When I have the opportunity, I plan to immerse myself in the local
+          culture, visit historical sites, and perhaps even learn the language
+          more fluently.
+        </p>
+        <p>
+          It's a dream that motivates me to work hard and achieve my goals, both
+          personally and professionally.
+        </p>
+
+        <h2 class="subtitle" id="head-3">My Hobby</h2>
+        <p><em>Playing guitar, listening music.</em></p>
+        <p>
+          Music has always been a significant part of my life. Playing the
+          guitar allows me to express my creativity and unwind after a long day
+          of coding.
+        </p>
+        <p>
+          I also enjoy discovering new music and attending live performances
+          whenever possible.
+        </p>
+        <p>
+          These activities help me maintain a balanced life and inspire me in my
+          work as a developer.
+        </p>
+        <h2 class="subtitle" id="head-4">My Education</h2>
+        <p><em>I took CS50.</em></p>
+        <p>
+          CS50, Harvard University's introduction to computer science, was a
+          transformative learning experience that solidified my foundation in
+          computer science principles.
+        </p>
+        <p>
+          It covered a broad range of topics, from basic programming to complex
+          algorithms and data structures, providing a strong foundation for my
+          career in tech.
+        </p>
+        <p>
+          This course, along with my formal education and hands-on experience,
+          has equipped me with the skills needed to tackle challenging projects
+          and continue learning and growing in the field.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
