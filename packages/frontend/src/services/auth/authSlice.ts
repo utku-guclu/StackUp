@@ -115,4 +115,4 @@ export const { refreshAuthentication } = authSlice.actions;
 // Export the hooks from the API
 export const { useLoginMutation, useLogoutMutation, useRegisterMutation } =
   authBlogApi;
-export { logout };  // Explicitly export the logout function
+// The logout function is already exported at the top of the file, so we don't need to export it again here.
