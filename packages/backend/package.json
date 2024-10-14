@@ -7,7 +7,12 @@
 		"format": "biome format --write",
 		"lint": "biome lint --write",
 		"serve": "node app.js",
-		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+		"test": "jest"
+	},
+	"jest": {
+		"transform": {},
+		"testEnvironment": "node",
+		"extensionsToTreatAsEsm": [".js"]
 	},
 	"dependencies": {
 		"bcryptjs": "2.4.3",
