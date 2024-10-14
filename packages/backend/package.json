@@ -7,7 +7,7 @@
 		"format": "biome format --write",
 		"lint": "biome lint --write",
 		"serve": "node app.js",
-		"test": "jest"
+		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
 	},
 	"dependencies": {
 		"bcryptjs": "2.4.3",
