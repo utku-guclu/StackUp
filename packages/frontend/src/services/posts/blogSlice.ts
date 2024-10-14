@@ -27,9 +27,7 @@ export const productApi = createApi({
 	refetchOnReconnect: true,
 	endpoints: (builder) => ({
     	getAllProducts: builder.query<ProductModel[], void>({
-        	query: () => ({
-            	url: "products",
-        	}),
+        	query: () => "products",
         	transformResponse: (response: { products: ProductModel[] }) => response.products,
         	transformErrorResponse: (response) => response.data as ErrorResponse,
         	providesTags: ["ProductModel"],
@@ -44,25 +42,24 @@ export const productApi = createApi({
         	query: (body) => ({
             	url: "product/create",
             	method: "POST",
-            	body: body,
+            	body,
         	}),
         	invalidatesTags: ["ProductModel"],
         	transformErrorResponse: (response) => response.data as ErrorResponse,
     	}),
     	deleteProduct: builder.mutation<ProductResponse, ProductDeleteRequest>({
-        	query: (body) => ({
-            	url: "product/delete",
+        	query: (id) => ({
+            	url: `product/delete/${id}`,
             	method: "DELETE",
-            	body: { id: body.id },
         	}),
         	invalidatesTags: ["ProductModel"],
         	transformErrorResponse: (response) => response.data as ErrorResponse,
     	}),
     	updateProduct: builder.mutation<ProductResponse, ProductUpdateRequest>({
         	query: (body) => ({
-            	url: "product/update",
+            	url: `product/update/${body.id}`,
             	method: "PUT",
-            	body: body,
+            	body,
         	}),
         	invalidatesTags: ["ProductModel"],
         	transformErrorResponse: (response) => response.data as ErrorResponse,

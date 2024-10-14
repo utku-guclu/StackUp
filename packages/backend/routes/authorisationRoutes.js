@@ -8,8 +8,8 @@ const accessControlRoutes = Router({ mergeParams: true });
 
 // Product routes
 accessControlRoutes.post("/product/create", tokenVerification, isSeller, createProduct);
-accessControlRoutes.put("/product/update", tokenVerification, isSeller, updateProduct);
-accessControlRoutes.delete("/product/delete", tokenVerification, isSeller, deleteProduct);
+accessControlRoutes.put("/product/update/:id", tokenVerification, isSeller, updateProduct);
+accessControlRoutes.delete("/product/delete/:id", tokenVerification, isSeller, deleteProduct);
 accessControlRoutes.get("/products", getAllProducts);
 accessControlRoutes.get("/products/user/:userId", getProductsByUser);
 

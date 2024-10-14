@@ -21,7 +21,8 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
 	try {
-		const { id, name, description, price, quantity } = req.body;
+		const { id } = req.params;
+		const { name, description, price, quantity } = req.body;
 		const sellerId = req.user.id;
 
 		const product = await ProductModel.findOne({ where: { id, sellerId } });
@@ -40,7 +41,7 @@ export const updateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
 	try {
-		const { id } = req.body;
+		const { id } = req.params;
 		const sellerId = req.user.id;
 
 		const product = await ProductModel.findOne({ where: { id, sellerId } });
