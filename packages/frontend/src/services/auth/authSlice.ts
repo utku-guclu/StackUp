@@ -14,7 +14,7 @@ import type { RootState } from "../../store";
 export const authBlogApi = createApi({
   baseQuery: fetchBaseQuery({
     // Replace your address here if needed i.e. your forwarded address from a cloud environment
-    baseUrl: "http://127.0.0.1:4040/api/",
+    baseUrl: "http://localhost:4040/api/",
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {
