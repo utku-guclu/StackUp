@@ -1,9 +1,10 @@
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useAppSelector } from "./store";
 import Login from "./pages/auth/Login";
 import CreatePost from "./pages/posts/CreatePost";
 import AllPost from "./pages/posts/AllPosts";
-import { useAppSelector } from "./store";
 import UserSpecificPosts from "./pages/posts/UserSpecificPosts";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Posts from "./pages/posts/Posts";
 import EditPost from "./pages/posts/EditPost";
 import NotFound from "./pages/404";
@@ -12,16 +13,16 @@ import "./App.css";
 
 import type { AuthState, UserResponse } from "./services/auth/types";
 
-const App = () => {
+const App: React.FC = () => {
+  const { user, token } = useAppSelector((state) => state.auth);
+  const userSession = sessionStorage.getItem("user");
+  const response: UserResponse | null = userSession ? JSON.parse(userSession) : null;
+  
   let authState: AuthState = {
     user: null,
     token: null
   };
 
-  const { user, token } = useAppSelector((state) => state.auth);
-  const userSession = sessionStorage.getItem("user");
-  const response: UserResponse | null = userSession ? JSON.parse(userSession) : null;
-  
   if (sessionStorage.getItem("isAuthenticated") === "true" && response !== null) {
     authState = {
       user: {
