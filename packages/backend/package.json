@@ -6,7 +6,8 @@
 	"scripts": {
 		"format": "biome format --write",
 		"lint": "biome lint --write",
-		"serve": "node app.js"
+		"serve": "node app.js",
+		"test": "jest"
 	},
 	"dependencies": {
 		"bcryptjs": "2.4.3",
@@ -25,11 +26,5 @@
 		"@biomejs/biome": "^1.9.0",
 		"jest": "^29.7.0",
 		"supertest": "^6.3.3"
-	},
-	"scripts": {
-		"format": "biome format --write",
-		"lint": "biome lint --write",
-		"serve": "node app.js",
-		"test": "jest"
 	}
 }
