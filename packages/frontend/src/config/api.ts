@@ -7,8 +7,10 @@ console.log('API_CONFIG.BASE_URL:', API_CONFIG.BASE_URL);
 // Function to check if the API is reachable
 export const checkApiConnection = async () => {
   try {
-    const response = await fetch(`${API_CONFIG.BASE_URL}/api/health`);
-    if (response.ok) {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/api/auth/register`, {
+      method: 'GET',
+    });
+    if (response.status === 404) {
       console.log('API is reachable');
       return true;
     } else {
