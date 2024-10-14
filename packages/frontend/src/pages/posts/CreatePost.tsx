@@ -28,9 +28,13 @@ const CreatePost = ({ authState }: { authState: AuthState }) => {
             	alert(result.message || "Failed to create post");
         	}
     	} catch (err) {
-        	const error = err as ErrorResponse;
-        	console.error("Failed to create blog post:", error);
-        	alert(error.message || "Something went wrong");
+        	console.error("Failed to create blog post:", err);
+        	let errorMessage = "Something went wrong";
+        	if (typeof err === 'object' && err !== null) {
+            	const error = err as ErrorResponse;
+            	errorMessage = error.data?.message || error.error || errorMessage;
+        	}
+        	alert(errorMessage);
     	}
 	};
 
