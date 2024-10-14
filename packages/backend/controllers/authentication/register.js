@@ -43,7 +43,7 @@ const register = async (req, res) => {
 			email: email,
 			password: password,
 			salt: salt,
-			role: "blogger",
+			role: req.body.role || "shopper", // Default to shopper if no role is provided
 		});
 
 		return res.status(200).json({ message: "User Created", ok: true });

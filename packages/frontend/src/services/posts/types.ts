@@ -1,35 +1,41 @@
-export interface BlogModel {
+export interface ProductModel {
 	id: number;
-	authorId: number;
-	authorUserName: string;
-	title: string;
-	content: string;
+	sellerId: number;
+	sellerUserName: string;
+	name: string;
+	description: string;
+	price: number;
+	quantity: number;
 	createdAt: Date;
 	updatedAt: Date;
 }
 
-export type AllBlogPostResponse = {
+export type AllProductResponse = {
 	message: string;
 	status: number;
 	ok: boolean;
-	posts: BlogModel[];
+	products: ProductModel[];
 };
 
-export interface BlogCreateRequest {
-	title: string | null;
-	content: string | null;
+export interface ProductCreateRequest {
+	name: string;
+	description: string;
+	price: number;
+	quantity: number;
 }
 
-export interface BlogDeleteRequest {
+export interface ProductDeleteRequest {
 	id: number;
-	title: string;
 }
 
-export interface BlogUpdateRequest extends BlogDeleteRequest {
-	content: string;
+export interface ProductUpdateRequest extends ProductDeleteRequest {
+	name?: string;
+	description?: string;
+	price?: number;
+	quantity?: number;
 }
 
-export interface BlogResponse {
+export interface ProductResponse {
 	message?: string;
 	status?: number;
 	ok?: boolean;

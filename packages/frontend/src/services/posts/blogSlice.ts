@@ -1,103 +1,79 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type {
-	BlogCreateRequest,
-	BlogDeleteRequest,
-	BlogModel,
-	BlogResponse,
-	BlogUpdateRequest,
+	ProductCreateRequest,
+	ProductDeleteRequest,
+	ProductModel,
+	ProductResponse,
+	ProductUpdateRequest,
 } from "./types";
 import type { RootState } from "../../store";
 import type { ErrorResponse } from "../error-types";
 
-// Define our service using a base URL and expected endpoints
-export const blogApi = createApi({
-	reducerPath: "blogApi",
-	// Change `localhost` to a forwarded address if using a cloud
-	// environment
+export const productApi = createApi({
+	reducerPath: "productApi",
 	baseQuery: fetchBaseQuery({
-    	// Replace your address here if needed i.e. your forwarded address from a cloud environment
     	baseUrl: "http://localhost:4040/api/",
-    	prepareHeaders: (headers, { getState, endpoint }) => {
+    	prepareHeaders: (headers, { getState }) => {
         	const token = (getState() as RootState).auth.token;
-        	// Some of the endpoints don't require logins
-        	if (
-            	token &&
-            	endpoint !== "posts/all" &&
-            	!endpoint.startsWith("posts/user")
-        	) {
+        	if (token) {
             	headers.set("Authorization", `Bearer ${token}`);
         	}
         	return headers;
     	},
-    	credentials: "include", // Include credentials for CORS
+    	credentials: "include",
 	}),
-	tagTypes: ["BlogModel"],
-	refetchOnFocus: true, // Moves to correct place
-	refetchOnReconnect: true, // Moves to correct place
+	tagTypes: ["ProductModel"],
+	refetchOnFocus: true,
+	refetchOnReconnect: true,
 	endpoints: (builder) => ({
-    	getAllBlogPosts: builder.query<BlogModel[], void>({
+    	getAllProducts: builder.query<ProductModel[], void>({
         	query: () => ({
-            	url: "posts/all",
+            	url: "products",
         	}),
-        	transformResponse: (response: { posts: BlogModel[] }, _meta, _arg) =>
-            	response.posts,
-        	transformErrorResponse: (response, _meta, _arg) => {
-            	return response.data as ErrorResponse;
-        	},
-        	providesTags: ["BlogModel"],
+        	transformResponse: (response: { products: ProductModel[] }) => response.products,
+        	transformErrorResponse: (response) => response.data as ErrorResponse,
+        	providesTags: ["ProductModel"],
     	}),
-    	getBlogPostsByUsername: builder.query<BlogModel[], string>({
-        	query: (user) => `posts/user/${user}`,
-        	transformResponse: (response: { posts: BlogModel[] }, _meta, _arg) =>
-            	response.posts,
-        	transformErrorResponse(response, _meta, _arg) {
-            	return response.data as ErrorResponse;
-        	},
-        	providesTags: ["BlogModel"],
+    	getProductsByUser: builder.query<ProductModel[], number>({
+        	query: (userId) => `products/user/${userId}`,
+        	transformResponse: (response: { products: ProductModel[] }) => response.products,
+        	transformErrorResponse: (response) => response.data as ErrorResponse,
+        	providesTags: ["ProductModel"],
     	}),
-    	createPost: builder.mutation<BlogResponse, BlogCreateRequest>({
+    	createProduct: builder.mutation<ProductResponse, ProductCreateRequest>({
         	query: (body) => ({
-            	url: "posts/post/create",
+            	url: "product/create",
             	method: "POST",
             	body: body,
         	}),
-        	invalidatesTags: ["BlogModel"],
-        	transformErrorResponse(response, _meta, _arg) {
-            	return response.data as ErrorResponse;
-        	},
+        	invalidatesTags: ["ProductModel"],
+        	transformErrorResponse: (response) => response.data as ErrorResponse,
     	}),
-    	deletePost: builder.mutation<BlogResponse, BlogDeleteRequest>({
+    	deleteProduct: builder.mutation<ProductResponse, ProductDeleteRequest>({
         	query: (body) => ({
-            	url: "posts/post/delete",
+            	url: "product/delete",
             	method: "DELETE",
-            	body: { id: body.id, title: body.title },
+            	body: { id: body.id },
         	}),
-        	invalidatesTags: ["BlogModel"],
-        	transformErrorResponse(response, _meta, _arg) {
-            	return response.data as ErrorResponse;
-        	},
+        	invalidatesTags: ["ProductModel"],
+        	transformErrorResponse: (response) => response.data as ErrorResponse,
     	}),
-    	updatePost: builder.mutation<BlogResponse, BlogUpdateRequest>({
+    	updateProduct: builder.mutation<ProductResponse, ProductUpdateRequest>({
         	query: (body) => ({
-            	url: "posts/post/update",
+            	url: "product/update",
             	method: "PUT",
             	body: body,
         	}),
-        	invalidatesTags: ["BlogModel"],
-        	transformErrorResponse(response, _meta, _arg) {
-            	return response.data as ErrorResponse;
-        	},
+        	invalidatesTags: ["ProductModel"],
+        	transformErrorResponse: (response) => response.data as ErrorResponse,
     	}),
 	}),
 });
 
-// Exporting the generated methods from createApi
 export const {
-	useLazyGetAllBlogPostsQuery,
-	useLazyGetBlogPostsByUsernameQuery,
-	useGetBlogPostsByUsernameQuery,
-	useGetAllBlogPostsQuery,
-	useCreatePostMutation,
-	useUpdatePostMutation,
-	useDeletePostMutation,
-} = blogApi;
+	useGetAllProductsQuery,
+	useGetProductsByUserQuery,
+	useCreateProductMutation,
+	useUpdateProductMutation,
+	useDeleteProductMutation,
+} = productApi;

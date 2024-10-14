@@ -18,7 +18,7 @@ export interface User {
 	id: number;
 	username: string;
 	email: string;
-	role: string;
+	role: 'admin' | 'seller' | 'shopper';
 }
 
 export type AuthState = {

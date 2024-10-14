@@ -1,9 +1,9 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelizeUsers } from "../database/db.js";
 
-class UserModel extends Model {}
+class ProductModel extends Model {}
 
-UserModel.init(
+ProductModel.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -11,32 +11,31 @@ UserModel.init(
 			primaryKey: true,
 			autoIncrement: true,
 		},
-		username: {
+		sellerId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+		},
+		name: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		email: {
-			type: DataTypes.STRING,
+		description: {
+			type: DataTypes.TEXT,
 			allowNull: false,
 		},
-		password: {
-			type: DataTypes.STRING,
+		price: {
+			type: DataTypes.DECIMAL(10, 2),
 			allowNull: false,
 		},
-		salt: {
-			type: DataTypes.STRING,
+		quantity: {
+			type: DataTypes.INTEGER,
 			allowNull: false,
-		},
-		role: {
-			type: DataTypes.ENUM('admin', 'seller', 'shopper'),
-			allowNull: false,
-			defaultValue: 'shopper',
 		},
 	},
 	{
 		sequelize: sequelizeUsers,
-		modelName: "users",
+		modelName: "products",
 	},
 );
 
-export default UserModel;
+export default ProductModel;

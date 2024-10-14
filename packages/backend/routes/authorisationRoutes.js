@@ -1,27 +1,21 @@
 import { Router } from "express";
-import createPost from "../controllers/access/controls/createPost.js";
-import deletePost from "../controllers/access/controls/deletePost.js";
-import updatePost from "../controllers/access/controls/updatePost.js";
-import loadUserPosts from "../controllers/access/controls/loadUserPosts.js";
 import tokenVerification from "../security/authentication.js";
-import allPosts from "../controllers/access/controls/allPosts.js";
+import { createProduct, updateProduct, deleteProduct, getAllProducts, getProductsByUser } from "../controllers/access/controls/productController.js";
+import { getAllUsers, deleteUser, addUser } from "../controllers/access/controls/userController.js";
+import { isAdmin, isSeller } from "../middleware/roleMiddleware.js";
 
 const accessControlRoutes = Router({ mergeParams: true });
 
-accessControlRoutes.post("/post/create", tokenVerification, (req, res) =>
-	createPost(req, res),
-);
-accessControlRoutes.delete("/post/delete", tokenVerification, (req, res) =>
-	deletePost(req, res),
-);
-accessControlRoutes.put("/post/update", tokenVerification, (req, res) =>
-	updatePost(req, res),
-);
+// Product routes
+accessControlRoutes.post("/product/create", tokenVerification, isSeller, createProduct);
+accessControlRoutes.put("/product/update", tokenVerification, isSeller, updateProduct);
+accessControlRoutes.delete("/product/delete", tokenVerification, isSeller, deleteProduct);
+accessControlRoutes.get("/products", getAllProducts);
+accessControlRoutes.get("/products/user/:userId", getProductsByUser);
 
-// no auth needed routes
-accessControlRoutes.get("/user/:username", (req, res) =>
-	loadUserPosts(req, res),
-);
-accessControlRoutes.get("/all", (req, res) => allPosts(req, res));
+// User management routes (admin only)
+accessControlRoutes.get("/users", tokenVerification, isAdmin, getAllUsers);
+accessControlRoutes.post("/user/add", tokenVerification, isAdmin, addUser);
+accessControlRoutes.delete("/user/delete/:userId", tokenVerification, isAdmin, deleteUser);
 
 export default accessControlRoutes;
