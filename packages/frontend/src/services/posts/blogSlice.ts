@@ -16,7 +16,7 @@ export const blogApi = createApi({
 	// environment
 	baseQuery: fetchBaseQuery({
     	// Replace your address here if needed i.e. your forwarded address from a cloud environment
-    	baseUrl: "http://127.0.0.1:4040/api/",
+    	baseUrl: "http://localhost:4040/api/",
     	prepareHeaders: (headers, { getState, endpoint }) => {
         	const token = (getState() as RootState).auth.token;
         	// Some of the endpoints don't require logins
