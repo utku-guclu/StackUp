@@ -7,7 +7,10 @@ import register from "../controllers/authentication/register.js";
 
 const authRoute = Router();
 
-authRoute.post("/register", (req, res) => register(req, res));
+authRoute.post("/register", (req, res) => {
+  console.log("Received registration request:", req.body);
+  register(req, res);
+});
 authRoute.post("/login", (req, res) => login(req, res));
 authRoute.post("/logout", (req, res) => logout(req, res));
 
