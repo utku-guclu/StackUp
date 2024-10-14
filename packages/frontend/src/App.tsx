@@ -8,13 +8,13 @@ import {
 } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "./store";
-import { logout } from "./slices/authSlice";
+import { logout } from "./services/auth/authSlice";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import ProductList from "./components/ProductList";
 import AddProduct from "./components/AddProduct";
 import UserManagement from "./components/UserManagement";
-import { refreshToken } from "./services/auth/auth";
+import { refreshToken } from "./services/auth/authSlice";
 
 const Navigation = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -77,13 +77,13 @@ function App() {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    const refreshTokenInterval = setInterval(() => {
-      if (user) {
+    if (user) {
+      const refreshTokenInterval = setInterval(() => {
         dispatch(refreshToken());
-      }
-    }, 14 * 60 * 1000); // Refresh token every 14 minutes
+      }, 14 * 60 * 1000); // Refresh token every 14 minutes
 
-    return () => clearInterval(refreshTokenInterval);
+      return () => clearInterval(refreshTokenInterval);
+    }
   }, [dispatch, user]);
 
   return (
