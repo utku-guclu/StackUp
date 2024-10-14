@@ -27,6 +27,9 @@ export const register = async (registerData: RegisterRequest): Promise<RegisterR
         return { message: 'Error setting up request. Please check your network connection.', ok: false };
       }
     }
+    if (error instanceof Error) {
+      return { message: error.message, ok: false };
+    }
     return { message: 'An unexpected error occurred', ok: false };
   }
 };

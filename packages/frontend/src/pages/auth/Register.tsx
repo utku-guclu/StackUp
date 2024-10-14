@@ -13,30 +13,34 @@ const Register = ({
     	email: "",
     	password: "",
 	});
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+	const handleSubmit = async (e: React.FormEvent) => {
+    	e.preventDefault();
+    	setErrorMessage(null);
+    	try {
+        	const result = await register(registerFormData).unwrap();
+        	if (result.ok) {
+            	navigate("/", { replace: true });
+        	} else {
+            	setErrorMessage(result.message || "Registration failed");
+        	}
+    	} catch (err: any) {
+        	if (err.error === 'TypeError: Failed to fetch') {
+            	setErrorMessage("Unable to connect to the server. Please check your internet connection or try again later.");
+        	} else {
+            	setErrorMessage(err.data?.message || "An error occurred during registration");
+        	}
+    	}
+	};
 
 	return (
     	<div className="card">
         	{!isAuthenticated && (
             	<>
                 	<h2>Register to our blogging platform</h2>
-                	<form
-                    	className="login"
-                    	onSubmit={(e) => {
-                        	e.preventDefault();
-                        	register(registerFormData)
-                            	.unwrap()
-                            	.then((data) => {
-                                	if (data.ok) {
-                                    	navigate("/", { replace: true });
-                                	} else {
-                                    	alert(data.message || "Registration failed");
-                                	}
-                            	})
-                            	.catch((err) => {
-                                	alert(err.data?.message || "An error occurred during registration");
-                            	});
-                    	}}
-                	>
+                	{errorMessage && <div className="error-message">{errorMessage}</div>}
+                	<form className="login" onSubmit={handleSubmit}>
                     	<input
                         	id="username"
                         	placeholder="Username"
