@@ -1,42 +1,32 @@
-export interface LoginRequest {
-	email: string;
-	password: string;
-}
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { AuthState, LoginRequest, RegisterRequest, UserResponse } from "./types";
+import { RootState } from "../../store";
 
-export interface RegisterResponse {
-	message: string,
-	ok?: boolean
-}
+// ... (keep all the existing type definitions)
 
-export interface RegisterRequest {
-	username: string;
-	email: string;
-	password: string;
-}
+export const refreshToken = createAsyncThunk<UserResponse, void, { state: RootState }>(
+  "auth/refreshToken",
+  async (_, { getState }) => {
+    const { auth } = getState();
+    if (!auth.token) {
+      throw new Error("No refresh token available");
+    }
 
-export interface User {
-	id: number;
-	username: string;
-	email: string;
-	role: 'admin' | 'seller' | 'shopper';
-}
+    const response = await fetch("http://localhost:4040/api/auth/refresh", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refreshToken: auth.token }),
+    });
 
-export type AuthState = {
-	user: User | null;
-	token: string | null;
-};
+    if (!response.ok) {
+      throw new Error("Failed to refresh token");
+    }
 
-export interface UserResponse {
-	token: string;
-	username: string;
-	userId: number;
-	email: string;
-	role: string;
-	status: number;
-	ok: boolean;
-}
+    const data: UserResponse = await response.json();
+    return data;
+  }
+);
 
-export interface LogOutResponse {
-	message: string;
-	ok?: boolean;
-}
+// ... (keep any existing functions in this file)
