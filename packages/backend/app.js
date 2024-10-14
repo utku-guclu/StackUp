@@ -15,6 +15,11 @@ app.use(express.json());
 app.use("/api/auth", authenticationRoutes);
 app.use("/api", accessControlRoutes);
 
+// Add a root route
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello from server!' });
+});
+
 const PORT = process.env.PORT || 4040;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
