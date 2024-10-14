@@ -85,13 +85,21 @@ const authSlice = createSlice({
           email: payload.email,
           role: payload.role,
         };
+        // Set session storage
+        sessionStorage.setItem("isAuthenticated", "true");
+        sessionStorage.setItem("user", JSON.stringify(payload));
+        // Set cookie (this won't actually set the cookie, but it's a hint for the server)
+        document.cookie = "advanced-state-management-user=true; path=/; secure; samesite=strict";
       },
     );
     builder.addMatcher(authBlogApi.endpoints.logout.matchFulfilled, (state) => {
       state.token = null;
       state.user = null;
+      // Clear session storage
       sessionStorage.removeItem("isAuthenticated");
       sessionStorage.removeItem("user");
+      // Clear cookie (this won't actually clear the cookie, but it's a hint for the server)
+      document.cookie = "advanced-state-management-user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       return state;
     });
   },
