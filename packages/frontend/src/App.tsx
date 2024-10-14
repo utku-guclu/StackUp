@@ -14,6 +14,7 @@ import Login from "./components/Login";
 import ProductList from "./components/ProductList";
 import AddProduct from "./components/AddProduct";
 import UserManagement from "./components/UserManagement";
+import { refreshToken } from "./services/auth/auth";
 
 const Navigation = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -73,6 +74,17 @@ const Navigation = () => {
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    const refreshTokenInterval = setInterval(() => {
+      if (user) {
+        dispatch(refreshToken());
+      }
+    }, 14 * 60 * 1000); // Refresh token every 14 minutes
+
+    return () => clearInterval(refreshTokenInterval);
+  }, [dispatch, user]);
 
   return (
     <Router>
