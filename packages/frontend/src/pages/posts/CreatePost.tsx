@@ -1,15 +1,16 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useState, useEffect } from "react";
 import type { BlogCreateRequest } from "../../services/posts/types";
 import { useCreatePostMutation } from "../../services/posts/blogSlice";
 import { useNavigate, Link } from "react-router-dom";
 import LogOutButton from "../auth/LogOutButton";
 import type { AuthState } from "../../services/auth/types";
 import type { ErrorResponse } from "../../services/error-types";
+import { useAppSelector } from "../../store";
 
 /**
  * Creates a post only if the user is authenticated.
  */
-const CreatePost = ({ authState }: { authState: AuthState }) => {
+const CreatePost = () => {
 	const navigate = useNavigate();
 	const [createPost, { isLoading }] = useCreatePostMutation();
 	const [postFormData, setPostFormData] = useState<BlogCreateRequest>({
@@ -17,10 +18,21 @@ const CreatePost = ({ authState }: { authState: AuthState }) => {
     	content: "",
 	});
 
+	const authState = useAppSelector((state) => state.auth);
+
+	useEffect(() => {
+    	if (!authState.user || !authState.token) {
+        	navigate("/");
+    	}
+	}, [authState, navigate]);
+
 	const handlePostSubmit = async (e: FormEvent) => {
     	e.preventDefault();
     	try {
-        	const result = await createPost(postFormData).unwrap();
+        	const result = await createPost({
+            	...postFormData,
+            	token: authState.token
+        	}).unwrap();
         	if (result.ok) {
             	alert(result.message);
             	setPostFormData({ title: "", content: "" });

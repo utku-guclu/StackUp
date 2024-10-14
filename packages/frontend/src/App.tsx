@@ -44,7 +44,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={isAuthenticated ? <Navigate to="/posts" /> : <Login />} />
         <Route path="/register" element={isAuthenticated ? <Navigate to="/posts" /> : <Register />} />
-        <Route path="/post/create" element={isAuthenticated ? <CreatePost authState={authState} /> : <Navigate to="/" />} />
+        <Route path="/post/create" element={isAuthenticated ? <CreatePost /> : <Navigate to="/" />} />
         <Route path="/posts" element={isAuthenticated ? <Posts authState={authState} /> : <Navigate to="/" />}>
           <Route index element={<AllPost />} />
           <Route path="user/:username" element={<UserSpecificPosts />} />
