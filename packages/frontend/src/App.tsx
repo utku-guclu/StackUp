@@ -40,7 +40,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={isAuthenticated ? <Navigate to="/posts" /> : <Login authState={authState} />} />
+        <Route path="/" element={isAuthenticated ? <Navigate to="/posts" /> : <Login />} />
         <Route path="/register" element={isAuthenticated ? <Navigate to="/posts" /> : <Register />} />
         <Route path="/post/create" element={isAuthenticated ? <CreatePost authState={authState} /> : <Navigate to="/" />} />
         <Route path="/posts" element={isAuthenticated ? <Posts authState={authState} /> : <Navigate to="/" />}>
