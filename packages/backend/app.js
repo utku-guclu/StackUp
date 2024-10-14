@@ -63,9 +63,13 @@ app.use("/api/auth/", authRoute);
 app.use("/api/posts/", accessControlRoutes);
 
 try {
-  app.listen(PORT, () =>
-    console.log(`Connected and listening on port ${PORT}.`),
-  );
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Connected and listening on port ${PORT}.`);
+    console.log('Available routes:');
+    console.log('  /api/auth/');
+    console.log('  /api/posts/');
+  });
 } catch (err) {
-  console.log(`Failed to start the server with error: ${err}`);
+  console.error(`Failed to start the server with error:`, err);
 }
