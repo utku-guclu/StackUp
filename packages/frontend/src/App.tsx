@@ -3,8 +3,7 @@ import CreatePost from "./pages/posts/CreatePost";
 import AllPost from "./pages/posts/AllPosts";
 import { useAppSelector } from "./store";
 import UserSpecificPosts from "./pages/posts/UserSpecificPosts";
-import { RouterProvider } from "react-router";
-import { createBrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Posts from "./pages/posts/Posts";
 import EditPost from "./pages/posts/EditPost";
 import NotFound from "./pages/404";
@@ -38,61 +37,20 @@ const App = () => {
   }
   const isAuthenticated = authState.user !== null && authState.token !== null;
 
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: (
-        <Login authState={authState} isAuthenticated={isAuthenticated} />
-      ),
-      children: [
-        {
-          path: "register",
-          element: <Register isAuthenticated={isAuthenticated} />,
-        },
-      ],
-    },
-    {
-      path: "/post/create/",
-      element: (
-        <CreatePost isAuthenticated={isAuthenticated} authState={authState} />
-      ),
-    },
-    {
-      path: "/posts/",
-      element: (
-        <Posts isAuthenticated={isAuthenticated} authState={authState} />
-      ),
-      children: [
-        {
-          path: "",
-          element: <AllPost />,
-        },
-        {
-          path: "user/:username",
-          element: <UserSpecificPosts isAuthenticated={isAuthenticated} />,
-          loader: async ({ params }) => {
-            return params.username;
-          },
-        },
-        {
-          path: "user/:username/post/edit/:postId",
-          element: <EditPost isAuthenticated={isAuthenticated} />,
-          loader: ({ params }) => {
-            return { username: params.username, postId: params.postId };
-          },
-        },
-      ],
-    },
-    {
-      path: "*",
-      element: <NotFound />,
-    },
-  ]);
-
   return (
-    <div>
-      <RouterProvider router={router} />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login authState={authState} isAuthenticated={isAuthenticated} />} />
+        <Route path="/register" element={<Register isAuthenticated={isAuthenticated} />} />
+        <Route path="/post/create" element={<CreatePost isAuthenticated={isAuthenticated} authState={authState} />} />
+        <Route path="/posts" element={<Posts isAuthenticated={isAuthenticated} authState={authState} />}>
+          <Route index element={<AllPost />} />
+          <Route path="user/:username" element={<UserSpecificPosts isAuthenticated={isAuthenticated} />} />
+          <Route path="user/:username/post/edit/:postId" element={<EditPost isAuthenticated={isAuthenticated} />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 };
 
