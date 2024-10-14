@@ -1,9 +1,15 @@
 import axios from 'axios';
 import { RegisterRequest, RegisterResponse } from './types';
-import { API_CONFIG } from '../../config/api';
+import { API_CONFIG, checkApiConnection } from '../../config/api';
 
 export const register = async (registerData: RegisterRequest): Promise<RegisterResponse> => {
   try {
+    // Check API connection before making the request
+    const isApiReachable = await checkApiConnection();
+    if (!isApiReachable) {
+      throw new Error('API is not reachable. Please check your backend server.');
+    }
+
     console.log('Attempting to register with URL:', `${API_CONFIG.BASE_URL}/api/auth/register`);
     const response = await axios.post<RegisterResponse>(`${API_CONFIG.BASE_URL}/api/auth/register`, registerData);
     return response.data;
@@ -15,10 +21,10 @@ export const register = async (registerData: RegisterRequest): Promise<RegisterR
         throw new Error(error.response.data.message || 'Registration failed');
       } else if (error.request) {
         console.error('No response received:', error.request);
-        throw new Error('No response received from server');
+        throw new Error('No response received from server. Please check if the backend is running.');
       } else {
         console.error('Error setting up request:', error.message);
-        throw new Error('Error setting up request');
+        throw new Error('Error setting up request. Please check your network connection.');
       }
     }
     throw error;
