@@ -17,34 +17,20 @@ const CreatePost = ({ authState }: { authState: AuthState }) => {
     	content: "",
 	});
 
-	const handlePostSubmit = (e: FormEvent) => {
+	const handlePostSubmit = async (e: FormEvent) => {
     	e.preventDefault();
     	try {
-        	createPost(postFormData)
-            	.then((payload) => {
-                	if (
-                    	payload.data?.ok !== undefined &&
-                    	payload.data?.message !== undefined
-                	) {
-                    	if (payload.data?.ok) {
-                        	alert(payload.data?.message);
-                        	return;
-                    	}
-                	}
-                	const error = payload.error as ErrorResponse | undefined;
-                	alert(error?.message);
-            	})
-            	.catch((error) => {
-                	console.log("rejected", error);
-                	alert("Something went wrong");
-                	navigate("/");
-            	});
-        	setPostFormData({
-            	title: "",
-            	content: "",
-        	});
+        	const result = await createPost(postFormData).unwrap();
+        	if (result.ok) {
+            	alert(result.message);
+            	setPostFormData({ title: "", content: "" });
+        	} else {
+            	alert(result.message || "Failed to create post");
+        	}
     	} catch (err) {
-        	alert(`Failed to create blog post with error: ${err}`);
+        	const error = err as ErrorResponse;
+        	console.error("Failed to create blog post:", error);
+        	alert(error.message || "Something went wrong");
     	}
 	};
 
