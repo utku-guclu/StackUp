@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { createSlice } from "@reduxjs/toolkit"; // Correct the import
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type {
   UserResponse,
   LoginRequest,
@@ -9,6 +9,10 @@ import type {
   RegisterRequest,
 } from "./types";
 import type { RootState } from "../../store";
+
+export const logout = createAsyncThunk("auth/logout", async (_, { dispatch }) => {
+  await dispatch(authBlogApi.endpoints.logout.initiate());
+});
 
 // Create the API service
 export const authBlogApi = createApi({
