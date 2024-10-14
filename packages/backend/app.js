@@ -64,6 +64,13 @@ app.use("/api/auth/", authRoute);
 app.use("/api/posts/", accessControlRoutes);
 app.get("/api/health", healthCheck);
 
+// Log all routes
+app._router.stack.forEach(function(r){
+  if (r.route && r.route.path){
+    console.log(r.route.path)
+  }
+});
+
 try {
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
