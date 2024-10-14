@@ -9,10 +9,12 @@
     "preview": "yarn build && vite preview",
     "lint": "biome lint --write src",
     "format": "biome format --write src",
-    "test": "jest"
+    "test": "jest",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
+    "@playwright/test": "^1.42.1",
     "@types/jest": "^29.5.13",
     "@types/react": "18.3.5",
     "@types/react-dom": "18.3.0",
