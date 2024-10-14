@@ -3,10 +3,21 @@ import bcrypt from "bcryptjs";
 
 const register = async (req, res) => {
 	try {
-		console.log(req);
+		console.log("Registration request received:", req.body);
 		let { username, password, email } = req.body;
 		if (!username || !password || !email) {
-			return res.status(400).json({ message: "Invalid Request" });
+			return res.status(400).json({ message: "Invalid Request: Missing required fields", ok: false });
+		}
+		
+		// Basic validation
+		if (username.length < 3 || username.length > 30) {
+			return res.status(400).json({ message: "Username must be between 3 and 30 characters", ok: false });
+		}
+		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+			return res.status(400).json({ message: "Invalid email format", ok: false });
+		}
+		if (password.length < 8) {
+			return res.status(400).json({ message: "Password must be at least 8 characters long", ok: false });
 		}
 		// Check if user already exists
 		const user = await UserModel.findOne({ where: { username: username } });

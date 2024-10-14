@@ -23,22 +23,18 @@ const Register = ({
                     	className="login"
                     	onSubmit={(e) => {
                         	e.preventDefault();
-                        	try {
-                            	register(registerFormData)
-                                	.then((data) => {
-                                    	if (data?.data?.ok) {
-                                        	return navigate("/", {
-                                            	replace: true,
-                                        	});
-                                    	}
-                                    	alert("Invalid credentials!");
-                                	})
-                                	.catch(() =>
-                                    	alert("Server error! Please file a bug report!"),
-                                	);
-                        	} catch (err) {
-                            	alert(`Failed to register; got ${err}`);
-                        	}
+                        	register(registerFormData)
+                            	.unwrap()
+                            	.then((data) => {
+                                	if (data.ok) {
+                                    	navigate("/", { replace: true });
+                                	} else {
+                                    	alert(data.message || "Registration failed");
+                                	}
+                            	})
+                            	.catch((err) => {
+                                	alert(err.data?.message || "An error occurred during registration");
+                            	});
                     	}}
                 	>
                     	<input

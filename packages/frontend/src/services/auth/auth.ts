@@ -18,15 +18,15 @@ export const register = async (registerData: RegisterRequest): Promise<RegisterR
     if (axios.isAxiosError(error)) {
       if (error.response) {
         console.error('Error response:', error.response.data);
-        throw new Error(error.response.data.message || 'Registration failed');
+        return { message: error.response.data.message || 'Registration failed', ok: false };
       } else if (error.request) {
         console.error('No response received:', error.request);
-        throw new Error('No response received from server. Please check if the backend is running.');
+        return { message: 'No response received from server. Please check if the backend is running.', ok: false };
       } else {
         console.error('Error setting up request:', error.message);
-        throw new Error('Error setting up request. Please check your network connection.');
+        return { message: 'Error setting up request. Please check your network connection.', ok: false };
       }
     }
-    throw error;
+    return { message: 'An unexpected error occurred', ok: false };
   }
 };
