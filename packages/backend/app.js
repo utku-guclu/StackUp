@@ -4,6 +4,7 @@ import authRoute from "./routes/authenticationRoutes.js";
 import morgan from "morgan";
 import accessControlRoutes from "./routes/authorisationRoutes.js";
 import dotenv from "dotenv";
+import healthCheck from "./controllers/healthCheck.js";
 dotenv.config();
 const config = process.env;
 
@@ -61,6 +62,7 @@ app.options("*", cors(corsOptions));
 
 app.use("/api/auth/", authRoute);
 app.use("/api/posts/", accessControlRoutes);
+app.get("/api/health", healthCheck);
 
 try {
   app.listen(PORT, () => {
