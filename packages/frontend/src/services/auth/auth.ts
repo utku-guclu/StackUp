@@ -9,6 +9,6 @@ export const register = async (registerData: RegisterRequest): Promise<RegisterR
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(error.response.data.message || 'Registration failed');
     }
-    throw new Error('An unexpected error occurred during registration');
+    throw error;
   }
 };
