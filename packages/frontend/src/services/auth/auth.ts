@@ -5,9 +5,9 @@ import { API_CONFIG, checkApiConnection } from '../../config/api';
 export const register = async (registerData: RegisterRequest): Promise<RegisterResponse> => {
   try {
     // Check API connection before making the request
-    const isApiReachable = await checkApiConnection();
-    if (!isApiReachable) {
-      throw new Error('API is not reachable. Please check your backend server.');
+    const { isReachable, error: connectionError } = await checkApiConnection();
+    if (!isReachable) {
+      throw new Error(connectionError || 'API is not reachable. Please check your backend server.');
     }
 
     console.log('Attempting to register with URL:', `${API_CONFIG.BASE_URL}/api/auth/register`);
