@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../services/auth/authSlice";
-import type { LoginRequest } from "../../services/auth/types";
+import type { LoginRequest, UserResponse } from "../../services/auth/types";
 import { Link } from "react-router-dom";
 
 const Login = () => {
@@ -17,11 +17,26 @@ const Login = () => {
     	try {
         	const result = await login(loginFormData).unwrap();
         	if (result.ok) {
-            	navigate("/post/create", { replace: true });
+            	// Store session information
+            	sessionStorage.setItem("isAuthenticated", "true");
+            	const userResponse: UserResponse = {
+                	token: result.token,
+                	username: result.username,
+                	userId: result.userId,
+                	email: result.email,
+                	role: result.role,
+                	status: result.status,
+                	ok: result.ok
+            	};
+            	sessionStorage.setItem("user", JSON.stringify(userResponse));
+            	
+            	// Redirect to posts page
+            	navigate("/posts", { replace: true });
         	} else {
             	alert("Invalid credentials!");
         	}
     	} catch (err) {
+        	console.error("Login error:", err);
         	alert("Server error! Please file a bug report!");
     	}
 	};
