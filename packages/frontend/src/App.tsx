@@ -14,7 +14,8 @@ import Login from "./components/Login";
 import ProductList from "./components/ProductList";
 import AddProduct from "./components/AddProduct";
 import UserManagement from "./components/UserManagement";
-import { refreshToken } from "./services/auth/authSlice";
+import MainPage from "./components/MainPage";
+import { refreshToken, logout } from "./services/auth/authSlice";
 
 const Navigation = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -30,6 +31,11 @@ const Navigation = () => {
         <li>
           <Link to="/" className="hover:text-gray-300">
             Home
+          </Link>
+        </li>
+        <li>
+          <Link to="/products" className="hover:text-gray-300">
+            Products
           </Link>
         </li>
         {!user && (
@@ -92,7 +98,8 @@ function App() {
         <Navigation />
         <div className="container mx-auto mt-8 p-4">
           <Routes>
-            <Route path="/" element={<ProductList />} />
+            <Route path="/" element={<MainPage />} />
+            <Route path="/products" element={<ProductList />} />
             <Route
               path="/register"
               element={user ? <Navigate to="/" /> : <Register />}
