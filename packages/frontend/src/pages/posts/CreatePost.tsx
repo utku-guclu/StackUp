@@ -24,7 +24,7 @@ const CreatePost = () => {
     	if (!authState.user || !authState.token) {
         	navigate("/");
     	}
-	}, [authState, navigate]);
+	}, [authState.user, authState.token, navigate]);
 
 	const handlePostSubmit = async (e: FormEvent) => {
     	e.preventDefault();
@@ -44,7 +44,11 @@ const CreatePost = () => {
         	let errorMessage = "Something went wrong";
         	if (typeof err === 'object' && err !== null) {
             	const error = err as ErrorResponse;
-            	errorMessage = error.data?.message || error.error || errorMessage;
+            	if (error.status === 503) {
+                	errorMessage = "Service is currently unavailable. Please try again later.";
+            	} else {
+                	errorMessage = error.data?.message || error.error || errorMessage;
+            	}
         	}
         	alert(errorMessage);
     	}
