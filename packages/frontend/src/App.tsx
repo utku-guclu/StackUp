@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "./store";
-import { logout } from "./services/auth/authSlice";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import ProductList from "./components/ProductList";
