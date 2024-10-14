@@ -14,7 +14,7 @@ import ProductList from "./components/ProductList";
 import AddProduct from "./components/AddProduct";
 import UserManagement from "./components/UserManagement";
 import MainPage from "./components/MainPage";
-import { refreshToken, logout } from "./services/auth/authSlice";
+import { refreshAuthentication, logout } from "./services/auth/authSlice";
 
 const Navigation = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -83,11 +83,11 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      const refreshTokenInterval = setInterval(() => {
-        dispatch(refreshToken());
-      }, 14 * 60 * 1000); // Refresh token every 14 minutes
+      const refreshAuthInterval = setInterval(() => {
+        dispatch(refreshAuthentication());
+      }, 14 * 60 * 1000); // Refresh authentication every 14 minutes
 
-      return () => clearInterval(refreshTokenInterval);
+      return () => clearInterval(refreshAuthInterval);
     }
   }, [dispatch, user]);
 
