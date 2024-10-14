@@ -1,84 +1,150 @@
 import express from "express";
-import cookieParser from "cookie-parser";
-import authRoute from "./routes/authenticationRoutes.js";
-import morgan from "morgan";
-import accessControlRoutes from "./routes/authorisationRoutes.js";
-import dotenv from "dotenv";
-import healthCheck from "./controllers/healthCheck.js";
-dotenv.config();
-const config = process.env;
-
+import bodyParser from "body-parser";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import cors from "cors";
 
-const PORT = 4040;
+console.log("Server starting...");
+
 const app = express();
 
-app.use(morgan("dev"));
-app.use(cookieParser(config.TOKEN));
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
 
-const corsOptions = {
-  // Add your address here i.e. your forwarded address from a cloud environment
-  origin: [
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:4173",
-    "http://127.0.0.1:4040",
-    "http://localhost:5173",
-    "http://localhost:4173",
-    "http://[::1]:4173",
-    "http://[::1]:5173",
-  ],
-  credentials: true, //included credentials as true
-  preflightContinue: true,
+// In-memory database (replace with a real database in production)
+let users = [];
+let products = [];
+
+// Middleware to verify JWT token
+const verifyToken = (req, res, next) => {
+  const token = req.headers["authorization"];
+  if (!token)
+    return res.status(403).send({ auth: false, message: "No token provided." });
+
+  jwt.verify(token, "your-secret-key", (err, decoded) => {
+    if (err)
+      return res
+        .status(500)
+        .send({ auth: false, message: "Failed to authenticate token." });
+
+    req.userId = decoded.id;
+    next();
+  });
 };
 
-app.use(cors(corsOptions));
+// Register new user
+app.post("/api/register", (req, res) => {
+  console.log("Received registration request:", req.body);
+  const hashedPassword = bcrypt.hashSync(req.body.password, 8);
+  const user = {
+    id: users.length + 1,
+    username: req.body.username,
+    password: hashedPassword,
+    role: req.body.role,
+  };
+  users.push(user);
 
-app.use((req, res, next) => {
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE",
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Access-Control-Allow-Origin, X-Requested-With,content-type,Content-Type, Authorization,Authentication,withCredentials, Content-Length, X-Requested-With, Accept, x-access-token,credentials, Origin, X-Content-Type-Options",
-  );
-  res.header(
-    "Access-Control-Expose-Headers",
-    "x-access-token, Authorization, Authentication, withCredentials, credentials, Set-Cookie",
-  );
-  res.header("Access-Control-Allow-Credentials", true);
-
-  // You might want to hard-code this if necessary.
-  const origin = req.get("origin") || req.get("referer");
-  res.header("Access-Control-Allow-Origin", origin);
-
-  next();
-});
-
-app.use(express.json());
-
-// Set Cors Options before other routes for all possible routes, enabling preflight across the board
-app.options("*", cors(corsOptions));
-
-app.use("/api/auth/", authRoute);
-app.use("/api/posts/", accessControlRoutes);
-app.get("/api/health", healthCheck);
-
-// Log all routes
-app._router.stack.forEach(function(r){
-  if (r.route && r.route.path){
-    console.log(r.route.path)
-  }
-});
-
-try {
-  app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-    console.log(`Connected and listening on port ${PORT}.`);
-    console.log('Available routes:');
-    console.log('  /api/auth/');
-    console.log('  /api/posts/');
+  const token = jwt.sign({ id: user.id }, "your-secret-key", {
+    expiresIn: 86400,
   });
-} catch (err) {
-  console.error(`Failed to start the server with error:`, err);
-}
+  console.log("User registered:", {
+    id: user.id,
+    username: user.username,
+    role: user.role,
+  });
+  res.status(200).send({
+    auth: true,
+    token: token,
+    user: { id: user.id, username: user.username, role: user.role },
+  });
+});
+
+// Login
+app.post("/api/login", (req, res) => {
+  console.log("Received login request:", req.body);
+  const user = users.find((u) => u.username === req.body.username);
+  if (!user) return res.status(404).send("No user found.");
+
+  const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+  if (!passwordIsValid)
+    return res.status(401).send({ auth: false, token: null });
+
+  const token = jwt.sign({ id: user.id }, "your-secret-key", {
+    expiresIn: 86400,
+  });
+  console.log("User logged in:", {
+    id: user.id,
+    username: user.username,
+    role: user.role,
+  });
+  res.status(200).send({
+    auth: true,
+    token: token,
+    user: { id: user.id, username: user.username, role: user.role },
+  });
+});
+
+// Get all products
+app.get("/api/products", (req, res) => {
+  res.status(200).send(products);
+});
+
+// Add a new product (seller only)
+app.post("/api/products", verifyToken, (req, res) => {
+  const user = users.find((u) => u.id === req.userId);
+  if (user.role !== "seller")
+    return res.status(403).send({ message: "Only sellers can add products." });
+
+  const product = {
+    id: products.length + 1,
+    name: req.body.name,
+    price: req.body.price,
+    quantity: req.body.quantity,
+    sellerId: user.id,
+  };
+  products.push(product);
+  res.status(201).send(product);
+});
+
+// Buy a product (shopper only)
+app.post("/api/products/:id/buy", verifyToken, (req, res) => {
+  const user = users.find((u) => u.id === req.userId);
+  if (user.role !== "shopper")
+    return res.status(403).send({ message: "Only shoppers can buy products." });
+
+  const product = products.find((p) => p.id === parseInt(req.params.id));
+  if (!product) return res.status(404).send({ message: "Product not found." });
+
+  if (product.quantity < req.body.quantity)
+    return res.status(400).send({ message: "Not enough stock." });
+
+  product.quantity -= req.body.quantity;
+  res.status(200).send(product);
+});
+
+// Get all users (admin only)
+app.get("/api/users", verifyToken, (req, res) => {
+  const user = users.find((u) => u.id === req.userId);
+  if (user.role !== "admin")
+    return res.status(403).send({ message: "Only admins can view all users." });
+
+  res
+    .status(200)
+    .send(users.map((u) => ({ id: u.id, username: u.username, role: u.role })));
+});
+
+// Delete a user (admin only)
+app.delete("/api/users/:id", verifyToken, (req, res) => {
+  const user = users.find((u) => u.id === req.userId);
+  if (user.role !== "admin")
+    return res.status(403).send({ message: "Only admins can delete users." });
+
+  users = users.filter((u) => u.id !== parseInt(req.params.id));
+  res.status(200).send({ message: "User deleted successfully." });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

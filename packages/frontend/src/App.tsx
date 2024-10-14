@@ -1,60 +1,119 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useAppSelector } from "./store";
-import Login from "./pages/auth/Login";
-import CreatePost from "./pages/posts/CreatePost";
-import AllPost from "./pages/posts/AllPosts";
-import UserSpecificPosts from "./pages/posts/UserSpecificPosts";
-import Posts from "./pages/posts/Posts";
-import EditPost from "./pages/posts/EditPost";
-import NotFound from "./pages/404";
-import Register from "./pages/auth/Register";
-import "./App.css";
+import React, { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Link,
+  Navigate,
+} from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "./store";
+import { logout } from "./slices/authSlice";
+import Register from "./components/Register";
+import Login from "./components/Login";
+import ProductList from "./components/ProductList";
+import AddProduct from "./components/AddProduct";
+import UserManagement from "./components/UserManagement";
 
-import type { AuthState, UserResponse } from "./services/auth/types";
+const Navigation = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch<AppDispatch>();
 
-const App: React.FC = () => {
-  const { user, token } = useAppSelector((state) => state.auth);
-  const userSession = sessionStorage.getItem("user");
-  const response: UserResponse | null = userSession ? JSON.parse(userSession) : null;
-  
-  let authState: AuthState = {
-    user: null,
-    token: null
+  const handleLogout = () => {
+    dispatch(logout());
   };
 
-  if (sessionStorage.getItem("isAuthenticated") === "true" && response !== null) {
-    authState = {
-      user: {
-        username: response.username,
-        id: response.userId,
-        email: response.email,
-        role: response.role
-      },
-      token: response.token
-    };
-  } else if (user && token) {
-    authState = { user, token };
-  }
-
-  const isAuthenticated = authState.user !== null && authState.token !== null;
-
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={isAuthenticated ? <Navigate to="/post/create" /> : <Login />} />
-        <Route path="/register" element={isAuthenticated ? <Navigate to="/post/create" /> : <Register />} />
-        <Route path="/post/create" element={isAuthenticated ? <CreatePost /> : <Navigate to="/" />} />
-        <Route path="/posts" element={isAuthenticated ? <Posts authState={authState} /> : <Navigate to="/" />}>
-          <Route index element={<AllPost />} />
-          <Route path="user/:username" element={<UserSpecificPosts />} />
-          <Route path="user/:username/post/edit/:postId" element={<EditPost />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <nav className="bg-gray-800 text-white p-4">
+      <ul className="flex space-x-4">
+        <li>
+          <Link to="/" className="hover:text-gray-300">
+            Home
+          </Link>
+        </li>
+        {!user && (
+          <>
+            <li>
+              <Link to="/register" className="hover:text-gray-300">
+                Register
+              </Link>
+            </li>
+            <li>
+              <Link to="/login" className="hover:text-gray-300">
+                Login
+              </Link>
+            </li>
+          </>
+        )}
+        {user && user.role === "seller" && (
+          <li>
+            <Link to="/add-product" className="hover:text-gray-300">
+              Add Product
+            </Link>
+          </li>
+        )}
+        {user && user.role === "admin" && (
+          <li>
+            <Link to="/user-management" className="hover:text-gray-300">
+              User Management
+            </Link>
+          </li>
+        )}
+        {user && (
+          <li>
+            <button onClick={handleLogout} className="hover:text-gray-300">
+              Logout
+            </button>
+          </li>
+        )}
+      </ul>
+    </nav>
   );
 };
 
-export default App;
+function App() {
+  const user = useSelector((state: RootState) => state.auth.user);
 
+  return (
+    <Router>
+      <div className="min-h-screen bg-gray-100">
+        <Navigation />
+        <div className="container mx-auto mt-8 p-4">
+          <Routes>
+            <Route path="/" element={<ProductList />} />
+            <Route
+              path="/register"
+              element={user ? <Navigate to="/" /> : <Register />}
+            />
+            <Route
+              path="/login"
+              element={user ? <Navigate to="/" /> : <Login />}
+            />
+            <Route
+              path="/add-product"
+              element={
+                user && user.role === "seller" ? (
+                  <AddProduct />
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+            <Route
+              path="/user-management"
+              element={
+                user && user.role === "admin" ? (
+                  <UserManagement />
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+          </Routes>
+        </div>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
