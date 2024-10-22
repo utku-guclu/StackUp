@@ -1,111 +1,226 @@
-# TODO#1: Import necessary libraries
+import torch
+import chromadb
+from PIL import Image
+import gradio as gr
+import time
+from transformers import CLIPProcessor, CLIPModel
+from sklearn.metrics.pairwise import cosine_similarity
+import os
+from typing import List, Tuple, Dict, Optional
+import logging
 
-# TODO#2: Setup ChromaDB
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+class VectorSearchEngine:
+    def __init__(self, collection_name: str = "multimedia_collection"):
+        """Initialize the vector search engine with CLIP model and ChromaDB."""
+        self.client = chromadb.PersistentClient(path="./chroma_db")
+        self.collection_name = collection_name
+        self.setup_collection()
+        self.load_models()
+        self.performance_metrics = {
+            'total_queries': 0,
+            'avg_query_time': 0,
+            'avg_accuracy': 0
+        }
 
-# TODO#3: Load CLIP model and processor for generating image and text embeddings
+    def setup_collection(self) -> None:
+        """Setup ChromaDB collection with proper error handling."""
+        try:
+            # Try to get existing collection
+            self.collection = self.client.get_collection(name=self.collection_name)
+            logger.info(f"Retrieved existing collection: {self.collection_name}")
+        except Exception as e:
+            logger.info(f"Collection not found, creating new one: {self.collection_name}")
+            # Create new collection if not found
+            self.collection = self.client.create_collection(
+                name=self.collection_name,
+                metadata={"description": "Multimedia vector search collection"}
+            )
 
+    def load_models(self) -> None:
+        """Load CLIP model and processor with error handling."""
+        try:
+            self.model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+            self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+            logger.info("Successfully loaded CLIP model and processor")
+        except Exception as e:
+            logger.error(f"Error loading models: {str(e)}")
+            raise
 
-# TODO#4: Load and preprocess images
+    def process_image(self, image_path: str) -> torch.Tensor:
+        """Process single image and return embedding."""
+        try:
+            image = Image.open(image_path)
+            inputs = self.processor(images=image, return_tensors="pt", padding=True)
+            with torch.no_grad():
+                return self.model.get_image_features(**inputs)
+        except Exception as e:
+            logger.error(f"Error processing image {image_path}: {str(e)}")
+            raise
 
-# Measure image ingestion time
-start_ingestion_time = time.time()
+    def ingest_images(self, image_paths: List[str]) -> Dict:
+        """Ingest multiple images with performance tracking."""
+        start_time = time.time()
+        embeddings = []
+        processed_paths = []
 
-with torch.no_grad():
-    image_embeddings = model.get_image_features(**inputs).numpy()
+        for path in image_paths:
+            try:
+                embedding = self.process_image(path)
+                embeddings.append(embedding.numpy().tolist()[0])
+                processed_paths.append(path)
+                logger.info(f"Successfully processed: {path}")
+            except Exception as e:
+                logger.error(f"Failed to process {path}: {str(e)}")
+                continue
 
-# Convert numpy arrays to lists
-image_embeddings = [embedding.tolist() for embedding in image_embeddings]
+        # Add to collection if we have processed images
+        if processed_paths:
+            try:
+                self.collection.add(
+                    embeddings=embeddings,
+                    metadatas=[{"path": path, "type": "image"} for path in processed_paths],
+                    ids=[f"img_{i}" for i in range(len(processed_paths))]
+                )
+                logger.info(f"Successfully added {len(processed_paths)} images to collection")
+            except Exception as e:
+                logger.error(f"Error adding to collection: {str(e)}")
+                raise
 
-# Measure total ingestion time
-end_ingestion_time = time.time()
-ingestion_time = end_ingestion_time - start_ingestion_time
+        end_time = time.time()
+        metrics = {
+            "ingestion_time": end_time - start_time,
+            "processed_images": len(processed_paths),
+            "failed_images": len(image_paths) - len(processed_paths)
+        }
+        
+        return metrics
 
-# TODO#5: Add image embeddings to the collection with metadata and display ingestion time
+    def search(self, query: str, top_k: int = 3) -> Tuple[List[str], Dict]:
+        """Perform vector search with detailed metrics."""
+        start_time = time.time()
+        
+        try:
+            # Generate query embedding
+            inputs = self.processor(text=query, return_tensors="pt", padding=True)
+            with torch.no_grad():
+                query_embedding = self.model.get_text_features(**inputs).numpy().tolist()
 
+            # Perform search
+            results = self.collection.query(
+                query_embeddings=query_embedding,
+                n_results=top_k
+            )
 
-# TODO#6: Create a function to calculate "accuracy" score based on cosine similarity
-
-# Define Gradio function
-def search_image(query):
-    # Simple validation: if the query is empty, show an error message
-    if not query.strip():
-        return None, "Oops! You forgot to type something on the query input!", ""
-
-    print(f"\nQuery: {query}")
-    
-    # Start measuring the query processing time
-    start_time = time.time()
-    
-    # TODO#7: Generate an embedding for the query text
-
-    # TODO#8: Convert the query embedding from numpy array to a list
-
-    # TODO#9: Perform a vector search in the collection
-
-    # TODO#10: Retrieve the matched image
-    
-    # Calculate accuracy score based on cosine similarity
-    accuracy_score = calculate_accuracy(matched_image_embedding, query_embedding[0])
-    
-    # End time for query processing
-    end_time = time.time()
-    query_time = end_time - start_time
-    
-    # TODO#11: Display result with accuracy, query time, and file name
-
-# Suggested queries
-queries = [
-    "A group of polar bears",
-    "A famous landmark in Paris",
-    "A hot pizza fresh from the oven",
-    "Food",
-    "A Place",
-    "A Structure in Europe",
-    "Animals"
-]
-
-# Function to populate the query input box with the suggested query
-def populate_query(suggested_query):
-    return suggested_query
-
-# Gradio Interface Layout
-with gr.Blocks() as gr_interface:
-    gr.Markdown("# Text-to-Image Vector Search using ChromaDB")
-    with gr.Row():
-        # Left Panel
-        with gr.Column():
-            # TODO#12: Display the ingestion time of image embeddings
+            # Calculate metrics
+            query_time = time.time() - start_time
             
-            gr.Markdown("### Input Panel")
+            # Update performance metrics
+            self.performance_metrics['total_queries'] += 1
+            self.performance_metrics['avg_query_time'] = (
+                (self.performance_metrics['avg_query_time'] * (self.performance_metrics['total_queries'] - 1) +
+                 query_time) / self.performance_metrics['total_queries']
+            )
+
+            metrics = {
+                "query_time": query_time,
+                "results_found": len(results['metadatas'][0]),
+                "distances": results['distances'][0]
+            }
+
+            return [meta["path"] for meta in results['metadatas'][0]], metrics
+        except Exception as e:
+            logger.error(f"Search error: {str(e)}")
+            raise
+
+def create_gradio_interface(search_engine: VectorSearchEngine):
+    """Create Gradio interface with enhanced features."""
+    def search_and_display(query: str) -> Tuple[List[Image.Image], str, str]:
+        if not query.strip():
+            return [], "Please enter a query", ""
+
+        try:
+            paths, metrics = search_engine.search(query)
+            images = [Image.open(path) for path in paths]
             
-            # Input box for custom query
-            custom_query = gr.Textbox(placeholder="Enter your custom query here", label="What are you looking for?")
-
-            # Buttons for cancel and submit actions
-            with gr.Row():
-                submit_button = gr.Button("Submit Query")
-                cancel_button = gr.Button("Cancel")
-
-            # Suggested search phrases as buttons styled like tags
-            gr.Markdown("#### Suggested Search Phrases")
-            with gr.Row(elem_id="button-container"):
-                for query in queries:
-                    # Populate the custom_query textbox with the clicked suggested query
-                    gr.Button(query).click(fn=lambda q=query: q, outputs=custom_query)
-
-        # Right Panel
-        with gr.Column():
-            gr.Markdown("### Retrieved Image")
-            # TODO#13: Output for image result
+            # Format metrics for display
+            metrics_display = (
+                f"Query Time: {metrics['query_time']:.4f}s\n"
+                f"Results Found: {metrics['results_found']}\n"
+                f"Average Similarity: {sum(metrics['distances'])/len(metrics['distances']):.4f}"
+            )
             
-            # Output for accuracy score and query time
-            accuracy_output = gr.Textbox(label="Performance")
+            return images, metrics_display, ""
+        except Exception as e:
+            return [], f"Error: {str(e)}", str(e)
 
-        # Button click handler for custom query submission
-        submit_button.click(fn=search_image, inputs=custom_query, outputs=[image_output, accuracy_output])
+    # Create interface
+    with gr.Blocks(title="Enhanced Vector Search") as interface:
+        gr.Markdown("# Advanced Vector Search Engine")
+        
+        with gr.Row():
+            with gr.Column(scale=2):
+                query_input = gr.Textbox(
+                    placeholder="Enter your search query...",
+                    label="Search Query"
+                )
+                search_button = gr.Button("Search", variant="primary")
+            
+            with gr.Column(scale=3):
+                gallery = gr.Gallery(
+                    label="Search Results",
+                    show_label=True,
+                    columns=3,  # Updated: using columns parameter instead of style
+                    height="auto"
+                )
+                
+        metrics_output = gr.Textbox(label="Search Metrics")
+        error_output = gr.Textbox(label="Status/Error Messages")
 
-        # Cancel button to clear the inputs
-        cancel_button.click(fn=lambda: (None, ""), outputs=[image_output, accuracy_output])
+        # Bind search function
+        search_button.click(
+            fn=search_and_display,
+            inputs=[query_input],
+            outputs=[gallery, metrics_output, error_output]
+        )
 
-# TODO#14: Launch the Gradio interface
+    return interface
+
+def main():
+    """Main function to initialize and run the application."""
+    try:
+        # Initialize search engine
+        search_engine = VectorSearchEngine()
+
+        # Sample image directory
+        image_dir = "images"
+        if not os.path.exists(image_dir):
+            os.makedirs(image_dir)
+            logger.info(f"Created image directory: {image_dir}")
+
+        # Ingest images
+        image_paths = [os.path.join(image_dir, f) for f in os.listdir(image_dir) 
+                      if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
+        
+        if image_paths:
+            try:
+                metrics = search_engine.ingest_images(image_paths)
+                logger.info(f"Ingestion metrics: {metrics}")
+            except Exception as e:
+                logger.error(f"Error during image ingestion: {str(e)}")
+        else:
+            logger.warning(f"No images found in {image_dir}")
+
+        # Create and launch Gradio interface
+        interface = create_gradio_interface(search_engine)
+        interface.launch(share=True)
+        
+    except Exception as e:
+        logger.error(f"Application error: {str(e)}")
+        raise
+
+if __name__ == "__main__":
+    main()
